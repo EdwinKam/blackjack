@@ -20,6 +20,10 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
+springBoot {
+	mainClass = 'com.edwinkam.blackjack.BlackjackApplication'
+}
+
 tasks.named('test') {
 	useJUnitPlatform()
 }
