@@ -20,6 +20,7 @@ public class HelloController {
         return "Hello, World from springboot!";
     }
 
+    @CrossOrigin
     @PostMapping("/add-to-queue")
     public String addToQueue(@RequestParam Integer number) throws InterruptedException {
         try {
@@ -29,6 +30,7 @@ public class HelloController {
         }
     }
 
+    @CrossOrigin
     @PostMapping("/check")
     public String check(@RequestParam String trackingUuid) throws InterruptedException {
         try {
@@ -38,6 +40,7 @@ public class HelloController {
         }
     }
 
+    @CrossOrigin
     @PostMapping("/stop")
     public String stop(@RequestParam String trackingUuid) throws InterruptedException {
         try {
@@ -48,6 +51,7 @@ public class HelloController {
         }
     }
 
+    @CrossOrigin
     @PostMapping("/stopall")
     public String stopAll() throws InterruptedException {
         try {
