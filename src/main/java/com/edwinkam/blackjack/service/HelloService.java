@@ -11,12 +11,12 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
-public class BlackjackService {
+public class HelloService {
 
     private BlockingQueue<BlackjackTask> requestQueue;
     private ConcurrentHashMap<String, String> concurrentHashMap;
 
-    public BlackjackService(@Qualifier("blackjackExecutor") Executor taskExecutor) {
+    public HelloService(@Qualifier("blackjackExecutor") Executor taskExecutor) {
         this.requestQueue = new LinkedBlockingQueue<>();
         this.concurrentHashMap = new ConcurrentHashMap<>();
         for (int i = 0; i < 2; i++) {
