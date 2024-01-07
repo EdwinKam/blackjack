@@ -7,11 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
 public class Hand {
-    private List<Card> hand = new ArrayList<>();
+    private List<Card> hand;
     private boolean hasAce;
 
+    public Hand() {
+        hand = new ArrayList<>();
+    }
+
+    public void setHand(List<Card> hand) {
+        this.hand = new ArrayList<>(hand);
+    }
     public void add(Card card) {
         if (card.getNumber() == 1) {
             hasAce = true;

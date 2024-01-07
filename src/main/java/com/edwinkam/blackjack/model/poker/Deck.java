@@ -31,4 +31,8 @@ public class Deck {
         return cards[currIndex++];
     }
 
+    public double percentageUsed() {
+        return (double) currIndex / (double) cards.length;
+    }
+
 }

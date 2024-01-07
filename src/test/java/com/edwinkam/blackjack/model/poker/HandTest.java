@@ -3,6 +3,9 @@ package com.edwinkam.blackjack.model.poker;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class HandTest {
@@ -103,5 +106,12 @@ public class HandTest {
         hand.add(new Card(7));
 
         assertFalse(hand.hasBlackjack());
+    }
+
+    @Test
+    public void addList() {
+        List<Hand> hands = new ArrayList<>();
+        hands.add(new Hand());
+        hands.get(0).add(new Card(1));
     }
 }
