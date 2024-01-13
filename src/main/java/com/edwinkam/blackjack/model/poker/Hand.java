@@ -15,6 +15,13 @@ public class Hand {
         hand = new ArrayList<>();
     }
 
+    public Hand(String... cards) {
+        hand = new ArrayList<>();
+        for (String card: cards) {
+            this.add(new Card(card));
+        }
+    }
+
     public void setHand(List<Card> hand) {
         this.hand = new ArrayList<>(hand);
     }

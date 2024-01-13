@@ -1,5 +1,6 @@
 package com.edwinkam.blackjack.service.simulator;
 
+import com.edwinkam.blackjack.cache.SimulatorProgressCache;
 import com.edwinkam.blackjack.model.game.GameRecord;
 import com.edwinkam.blackjack.model.game.GameResult;
 import com.edwinkam.blackjack.model.game.PlayerAction;
@@ -20,15 +21,12 @@ import java.util.List;
 
 @Service
 public class SimulatorService {
-    private StrategyService strategyService;
-    private DeckProvider deckProvider;
-
     @Autowired
-    public SimulatorService(StrategyService strategyService,
-                            DeckProvider deckProvider) {
-        this.strategyService = strategyService;
-        this.deckProvider = deckProvider;
-    }
+    private StrategyService strategyService;
+    @Autowired
+    private DeckProvider deckProvider;
+    @Autowired
+    private SimulatorProgressCache simulatorProgressCache;
 
     private int NUM_OF_ONE_DECK = 52;
     private int NUM_OF_DECK = 2;
@@ -37,15 +35,13 @@ public class SimulatorService {
 
     private List<GameRecord> gameRecords = new ArrayList<>();
     public SimulatorResponse simulate(SimulatorRequest request) {
-        int gameLeft = request.getNumOfGame();
         Deck deck = deckProvider.newDeck(2);
         double playerAsset = 0;
 
-        while (gameLeft > 0) {
-            gameLeft--;
+        for (int currGame = 1; currGame <= request.getNumOfGame(); currGame++) {
             double playerOriginalAsset = playerAsset;
 
-            if (deck.percentageUsed() < CUT_OFF) {
+            if (deck.percentageUsed() > CUT_OFF) {
                 // RESHUFFLE
                 deck.shuffle();
             }
@@ -146,7 +142,12 @@ public class SimulatorService {
             record.setPlayerAfterGameAsset(playerAsset);
             record.setResults(results);
 
-            gameRecords.add(record);
+            if (currGame <= 10) {
+                gameRecords.add(record);
+            }
+
+            logProgress(currGame, request);
+
 
         }
 
@@ -156,6 +157,17 @@ public class SimulatorService {
     private void dealDealersCard(Hand dealer, Deck deck) {
         while (dealer.getSum() < 17 || dealer.isSoft17()) {
             dealer.add(deck.next());
+        }
+    }
+
+    private void logProgress(int currGame, SimulatorRequest request) {
+        int progressPoint = request.getNumOfGame() / 10;
+        if (currGame % progressPoint == 0 && currGame / progressPoint <= 10) {
+            simulatorProgressCache.put(request.getTrackingUuid(), currGame / progressPoint - 1);
+        }
+
+        if (currGame == request.getNumOfGame()) {
+            simulatorProgressCache.put(request.getTrackingUuid(), 10);
         }
     }
 }

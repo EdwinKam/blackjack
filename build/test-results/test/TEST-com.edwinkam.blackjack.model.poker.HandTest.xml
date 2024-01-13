@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="com.edwinkam.blackjack.model.poker.HandTest" tests="12" skipped="0" failures="0" errors="0" timestamp="2024-01-12T02:01:49" hostname="Edwins-MacBook-Pro.local" time="0.006">
+  <properties/>
+  <testcase name="testGetSumWithHeadAceMoreThan2Cards()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.002"/>
+  <testcase name="addList()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="testGetSumWithAce()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="testGetSumWithHeadAce()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="isSoft17()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="testGetSumWithHead()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="hasBlackjack()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="hasAce21But3Cards()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.001"/>
+  <testcase name="hasBlackjackWithHead()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="isSoft17And3Cards()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="is17ButNoAce()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <testcase name="has21But3Cards()" classname="com.edwinkam.blackjack.model.poker.HandTest" time="0.0"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>

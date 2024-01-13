@@ -1,5 +1,7 @@
 package com.edwinkam.blackjack.model.poker;
 
+import java.util.Random;
+
 public class Deck {
     private Card[] cards;
     private int currIndex;
@@ -17,16 +19,27 @@ public class Deck {
         int index = 0;
         for (int i = 0; i < numOfDecks; i++) {
             for (int cardNumber = 1; cardNumber <= 13; cardNumber++) {
-                this.cards[index++] = new Card(cardNumber);
+                for (int suit = 0; suit < 4; suit++) {
+                    this.cards[index++] = new Card(cardNumber);
+                }
             }
         }
         this.currIndex = 0;
     }
 
     public void shuffle() {
-        this.currIndex = 0;
-        // do nothing for now
+        Random random = new Random();
+        for (int i = cards.length - 1; i > 0; i--) {
+            int j = random.nextInt(i + 1);
+
+            // Swap cards[i] with cards[j]
+            Card temp = cards[i];
+            cards[i] = cards[j];
+            cards[j] = temp;
+        }
+        this.currIndex = 0;  // Reset current index after shuffling
     }
+
     public Card next() {
         return cards[currIndex++];
     }
