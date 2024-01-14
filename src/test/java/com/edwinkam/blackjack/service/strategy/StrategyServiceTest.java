@@ -4,10 +4,6 @@ import com.edwinkam.blackjack.model.game.PlayerAction;
 import com.edwinkam.blackjack.model.poker.Hand;
 import org.junit.Assert;
 import org.junit.Test;
-import org.mockito.InjectMocks;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import static org.junit.Assert.*;
 
 public class StrategyServiceTest {
     StrategyService strategyService = new StrategyService();

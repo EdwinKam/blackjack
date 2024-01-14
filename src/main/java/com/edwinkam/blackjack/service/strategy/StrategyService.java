@@ -63,23 +63,23 @@ public class StrategyService {
 
     public PlayerAction getPlayerAction(Hand player, Hand dealer) {
         int playerSum = player.getSum();
-        int dealerHead = dealer.getHand().get(0).getValue();  // Assume we can only see one dealer card
+        int dealerHead = dealer.getCard(0).getValue();  // Assume we can only see one dealer card
         if (dealerHead == 1) dealerHead = 11;
 
         // Check for splitting
-        if (player.getHand().size() == 2 && player.getHand().get(0).getNumber() == player.getHand().get(1).getNumber()) {
-            int playerOneCardValue = player.getHand().get(0).getValue();
+        if (player.getCardCount() == 2 && player.getCard(0).getId() == player.getCard(1).getId()) {
+            int playerOneCardValue = player.getCard(0).getValue();
             return decisionTableSplit[playerOneCardValue - 1][dealerHead - 2];
         }
 
-        if (player.isHasAce()) {
-            int nonAceCard = player.getHand().get(0).getValue() == 1 ?
-                    player.getHand().get(1).getValue() : player.getHand().get(0).getValue();
+        if (player.isHasAce() && player.getHardSum() - 1 <= 10) {
+            int nonAceCard = player.getCard(0).getValue() == 1 ?
+                    player.getCard(1).getValue() : player.getCard(0).getValue();
             return decisionTableAce[nonAceCard - 2][dealerHead - 2];
         }
 
         // Use the hard decision table
-        if (playerSum <= 21) {
+        if (playerSum < 21) {
             return decisionTableHard[playerSum - 5][dealerHead - 2];
         } else {
             return PlayerAction.STAND;  // No choice but to stand when busted

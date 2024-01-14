@@ -30,14 +30,14 @@ public class Deck {
     public void shuffle() {
         Random random = new Random();
         for (int i = cards.length - 1; i > 0; i--) {
-            int j = random.nextInt(i + 1);
+            int j = random.nextInt(cards.length);
 
             // Swap cards[i] with cards[j]
             Card temp = cards[i];
             cards[i] = cards[j];
             cards[j] = temp;
         }
-        this.currIndex = 0;  // Reset current index after shuffling
+        currIndex = 0;  // Reset current index after shuffling
     }
 
     public Card next() {

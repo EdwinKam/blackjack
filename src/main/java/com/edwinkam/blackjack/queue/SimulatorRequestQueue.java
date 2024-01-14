@@ -1,10 +1,8 @@
 package com.edwinkam.blackjack.queue;
 
-import com.edwinkam.blackjack.model.BlackjackTask;
 import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 

@@ -8,56 +8,56 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Card {
-    private int number;
+    private int id;
 
     public Card(String str) {
         switch (str) {
             case "A":
-                number = 1;
+                id = 1;
                 break;
             case "2":
-                number = 2;
+                id = 2;
                 break;
             case "3":
-                number = 3;
+                id = 3;
                 break;
             case "4":
-                number = 4;
+                id = 4;
                 break;
             case "5":
-                number = 5;
+                id = 5;
                 break;
             case "6":
-                number = 6;
+                id = 6;
                 break;
             case "7":
-                number = 7;
+                id = 7;
                 break;
             case "8":
-                number = 8;
+                id = 8;
                 break;
             case "9":
-                number = 9;
+                id = 9;
                 break;
             case "10":
-                number = 10;
+                id = 10;
                 break;
             case "J":
-                number = 11;
+                id = 11;
                 break;
             case "Q":
-                number = 12;
+                id = 12;
                 break;
             case "K":
-                number = 13;
+                id = 13;
                 break;
             default:
-                throw new IllegalArgumentException("Card string must be a number between 2 and 10, or one of 'A', 'J', 'Q', 'K'");
+                throw new IllegalArgumentException("Card string must be a id between 2 and 10, or one of 'A', 'J', 'Q', 'K'");
         }
     }
 
     public int getValue() {
-        switch (number) {
+        switch (id) {
             case 1:
             case 2:
             case 3:
@@ -68,7 +68,7 @@ public class Card {
             case 8:
             case 9:
             case 10:
-                return number;
+                return id;
             case 11:
             case 12:
             case 13:
@@ -78,7 +78,7 @@ public class Card {
         }
     }
     public String toString() {
-        switch (number) {
+        switch (id) {
             case 1:
                 return "A";
             case 2:
@@ -90,7 +90,7 @@ public class Card {
             case 8:
             case 9:
             case 10:
-                return String.valueOf(number);
+                return String.valueOf(id);
             case 11:
                 return "J";
             case 12:

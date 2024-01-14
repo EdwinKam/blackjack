@@ -23,6 +23,7 @@ public class BlackjackClient {
     public String submitSimulatorRequest(SimulatorRequest request) {
         String trackingUuid = UUID.randomUUID().toString();
         request.setTrackingUuid(trackingUuid);
+        // blackjackService.java will pick up the request when available
         simulatorRequestQueue.add(request);
         simulatorProgressCache.put(trackingUuid, 0);
         return trackingUuid;
