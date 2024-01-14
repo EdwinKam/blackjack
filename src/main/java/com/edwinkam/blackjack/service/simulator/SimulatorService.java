@@ -1,6 +1,5 @@
 package com.edwinkam.blackjack.service.simulator;
 
-import com.edwinkam.blackjack.cache.SimulatorProgressCache;
 import com.edwinkam.blackjack.model.game.GameRecord;
 import com.edwinkam.blackjack.model.game.GameResult;
 import com.edwinkam.blackjack.model.game.PlayerAction;
@@ -16,28 +15,37 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class SimulatorService {
-    @Autowired
     private StrategyService strategyService;
-    @Autowired
     private DeckProvider deckProvider;
-    @Autowired
-    private SimulatorProgressCache simulatorProgressCache;
 
+    @Autowired
+    public SimulatorService(StrategyService strategyService,
+                            DeckProvider deckProvider) {
+        this.strategyService = strategyService;
+        this.deckProvider = deckProvider;
+    }
+
+    private int NUM_OF_ONE_DECK = 52;
     private int NUM_OF_DECK = 2;
     private double CUT_OFF = 0.5;
     private double BASE_BET = 1;
 
+    private List<GameRecord> gameRecords = new ArrayList<>();
     public SimulatorResponse simulate(SimulatorRequest request) {
-        Deck deck = deckProvider.newDeck(NUM_OF_DECK);
+        int gameLeft = request.getNumOfGame();
+        Deck deck = deckProvider.newDeck(2);
         double playerAsset = 0;
-        List<GameRecord> gameRecords = new ArrayList<>();
-        for (int currGame = 1; currGame <= request.getNumOfGame(); currGame++) {
+
+        while (gameLeft > 0) {
+            gameLeft--;
             double playerOriginalAsset = playerAsset;
-            if (deck.percentageUsed() > CUT_OFF) {
+
+            if (deck.percentageUsed() < CUT_OFF) {
                 // RESHUFFLE
                 deck.shuffle();
             }
@@ -51,35 +59,26 @@ public class SimulatorService {
             playerFirstHand.add(deck.next());
             dealer.add(deck.next());
 
-            GameResult resultIfSomeoneHadBlackjack = null;
+            GameResult gameResult;
 
             if (playerFirstHand.hasBlackjack() && dealer.hasBlackjack()) {
                 // push
-                resultIfSomeoneHadBlackjack = GameResult.PUSH;
+                gameResult = GameResult.PUSH;
             } else if (playerFirstHand.hasBlackjack()) {
                 // player win 1.5
-                resultIfSomeoneHadBlackjack = GameResult.PLAYER_BLACKJACK;
+                gameResult = GameResult.PLAYER_BLACKJACK;
             } else if (dealer.hasBlackjack()) {
                 // dealer win 1
-                resultIfSomeoneHadBlackjack = GameResult.DEALER_WIN;
+                gameResult = GameResult.DEALER_WIN;
             } else {
                 // PLAYER start to play
-                boolean atLeastOneHandNoBust = false;
                 for (int i = 0; i < playerHands.size(); i++) {
-                    PlayerHand playerCurrentHand = playerHands.get(i);
                     PlayerAction action;
-                    boolean firstAction = true;
                     while (true) {
-                        if (playerCurrentHand.getHardSum() > 21) {
-                            break;
-                        }
+                        PlayerHand playerCurrentHand = playerHands.get(i);
                         action = strategyService.getPlayerAction(playerCurrentHand, dealer);
                         if (action == PlayerAction.STAND) {
                             break;
-                        }
-
-                        if (action == PlayerAction.DOUBLE && !firstAction) {
-                            action = PlayerAction.HIT;
                         }
 
                         switch (action) {
@@ -90,54 +89,40 @@ public class SimulatorService {
                                 playerCurrentHand.doubleBet();
                                 break;
                             case SPLIT:
-                                Card firstCard = playerCurrentHand.getCard(0);
-                                Card secondCard = playerCurrentHand.getCard(1);
+                                Card firstCard = playerCurrentHand.getHand().get(0);
+                                Card secondCard = playerCurrentHand.getHand().get(1);
 
                                 PlayerHand newHand = new PlayerHand(playerCurrentHand.getBet());
 
                                 // split two hand, assign one new card to each
-                                playerCurrentHand.setHand(firstCard, deck.next());
-                                newHand.setHand(secondCard, deck.next());
+                                playerFirstHand.setHand(Arrays.asList(firstCard, deck.next()));
+                                newHand.setHand(Arrays.asList(secondCard, deck.next()));
 
                                 playerHands.add(newHand);
                                 break;
                             default:
-                                System.err.printf("unexpected action: %s player: %s dealer: %s\n", action.toString(),
-                                        playerCurrentHand.toString(), dealer.toString());
                                 break;
                         }
-                        firstAction = false;
                     }
-                    if (playerCurrentHand.getSum() <= 21) {
-                        atLeastOneHandNoBust = true;
-                    }
-                }
-                if (atLeastOneHandNoBust) {
-                    // handle blackjack situation
-                    dealDealersCard(dealer, deck);
+
                 }
             }
+            // handle blackjack situation
+            dealDealersCard(dealer, deck);
 
             List<GameResult> results = new ArrayList<>();
-            for (PlayerHand playerHand : playerHands) {
-                GameResult finalResult;
-                if (resultIfSomeoneHadBlackjack != null) {
-                    // no need to calculate
-                    finalResult = resultIfSomeoneHadBlackjack;
-                } else if (playerHand.getSum() > 21) {
-                    finalResult = GameResult.DEALER_WIN;
-                } else if (dealer.getSum() > 21) {
-                    finalResult = GameResult.PLAYER_WIN;
-                } else if (playerHand.getSum() > dealer.getSum()) {
-                    finalResult = GameResult.PLAYER_WIN;
+            for (PlayerHand playerHand: playerHands) {
+                if (playerHand.getSum() > dealer.getSum()) {
+                    gameResult = GameResult.PLAYER_WIN;
                 } else if (dealer.getSum() > playerHand.getSum()) {
-                    finalResult = GameResult.DEALER_WIN;
+                    gameResult = GameResult.DEALER_WIN;
                 } else {
-                    finalResult = GameResult.PUSH;
+                    gameResult = GameResult.PUSH;
                 }
 
-                results.add(finalResult);
-                switch (finalResult) {
+                results.add(gameResult);
+
+                switch (gameResult) {
                     case PLAYER_BLACKJACK:
                         playerAsset += playerHand.getBet() * 1.5;
                         break;
@@ -154,45 +139,23 @@ public class SimulatorService {
                 }
             }
 
-            if (currGame <= 10 || currGame == request.getNumOfGame()) {
-                GameRecord record = new GameRecord();
-                record.setDealer(dealer);
-                record.setPlayerAllHands(playerHands);
-                record.setPlayerOriginalAsset(playerOriginalAsset);
-                record.setPlayerAfterGameAsset(playerAsset);
-                record.setResults(results);
-                record.setGameNumber(currGame);
-                gameRecords.add(record);
-            }
+            GameRecord record = new GameRecord();
+            record.setDealer(dealer);
+            record.setPlayerAllHands(playerHands);
+            record.setPlayerOriginalAsset(playerOriginalAsset);
+            record.setPlayerAfterGameAsset(playerAsset);
+            record.setResults(results);
 
-            logProgress(currGame, request);
+            gameRecords.add(record);
 
         }
 
         SimulatorResponse response = new SimulatorResponse(gameRecords);
         return response;
     }
-
     private void dealDealersCard(Hand dealer, Deck deck) {
         while (dealer.getSum() < 17 || dealer.isSoft17()) {
             dealer.add(deck.next());
-        }
-    }
-
-    private void logProgress(int currGame, SimulatorRequest request) {
-        int numOfGame = request.getNumOfGame();
-
-        // If numOfGame is less than or equal to 10, put the currGame as the progress
-        // directly
-        if (numOfGame <= 10) {
-            simulatorProgressCache.put(request.getTrackingUuid(), currGame);
-            return;
-        }
-
-        int progressPoint = numOfGame / 10;
-
-        if (currGame % progressPoint == 0 && currGame / progressPoint <= 10) {
-            simulatorProgressCache.put(request.getTrackingUuid(), currGame / progressPoint);
         }
     }
 }
