@@ -1,5 +1,4 @@
 .gradle/
-build/
 .gradle/7.3 .gradle/8.5 .gradle/buildOutputCleanup .gradle/file-system.probe .gradle/vcs-1
 .idea/
 out/
