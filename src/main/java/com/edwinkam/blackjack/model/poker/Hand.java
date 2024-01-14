@@ -1,29 +1,40 @@
 package com.edwinkam.blackjack.model.poker;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.util.ArrayList;
 import java.util.List;
 
-@Data
 public class Hand {
-    private List<Card> hand;
+    protected List<Card> hand;
     private boolean hasAce;
 
     public Hand() {
         hand = new ArrayList<>();
     }
 
+    public Hand(String... cards) {
+        hand = new ArrayList<>();
+        for (String card: cards) {
+            this.add(new Card(card));
+        }
+    }
+
+    public Hand(Card... cards) {
+        hand = new ArrayList<>();
+        for (Card card: cards) {
+            this.add(card);
+        }
+    }
+
     public void setHand(List<Card> hand) {
         this.hand = new ArrayList<>(hand);
     }
     public void add(Card card) {
-        if (card.getNumber() == 1) {
+        if (card.getId() == 1) {
             hasAce = true;
         }
         hand.add(card);
     }
+
     public int getSum() {
         int sum = 0;
         for (Card card: hand) {
@@ -38,6 +49,15 @@ public class Hand {
         return sum;
     }
 
+    public int getHardSum() {
+        int sum = 0;
+        for (Card card: hand) {
+            sum += card.getValue();
+        }
+
+        return sum;
+    }
+
     public boolean isSoft17() {
         return getSum() == 17 && hasAce;
     }
@@ -46,7 +66,19 @@ public class Hand {
         return hand.size() == 2 && getSum() == 21;
     }
 
+    public boolean isHasAce() {
+        return this.hasAce;
+    }
+
+    public Card getCard(int index) {
+        return this.hand.get(index);
+    }
+
+    public int getCardCount() {
+        return hand.size();
+    }
+
     public String toString() {
-        return hand.toString();
+        return hand.toString() + " Sum: " + this.getSum();
     }
 }
