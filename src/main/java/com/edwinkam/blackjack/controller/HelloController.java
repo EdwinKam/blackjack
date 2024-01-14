@@ -1,6 +1,9 @@
 package com.edwinkam.blackjack.controller;
 
+import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.service.HelloService;
+import com.edwinkam.blackjack.service.simulator.SimulatorService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,6 +16,9 @@ public class HelloController {
 
     @Autowired
     private HelloService helloService;
+
+    @Autowired
+    private SimulatorService simulatorService;
 
     @CrossOrigin
     @GetMapping("/hello")
@@ -60,6 +66,14 @@ public class HelloController {
         } catch (Exception e) {
             return "error";
         }
+    }
+
+    @CrossOrigin
+    @PostMapping("/tests")
+    public String tests() throws InterruptedException {
+        SimulatorRequest reqest = new SimulatorRequest(100);
+        reqest.setTrackingUuid("test");
+        return simulatorService.simulate(reqest).toString();
     }
 
 }

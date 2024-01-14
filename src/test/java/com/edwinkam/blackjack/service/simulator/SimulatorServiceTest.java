@@ -1,5 +1,7 @@
 package com.edwinkam.blackjack.service.simulator;
 
+import com.edwinkam.blackjack.cache.SimulatorProgressCache;
+import com.edwinkam.blackjack.model.game.GameResult;
 import com.edwinkam.blackjack.model.game.PlayerAction;
 import com.edwinkam.blackjack.model.poker.Card;
 import com.edwinkam.blackjack.model.poker.Deck;
@@ -15,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,6 +34,9 @@ public class SimulatorServiceTest {
 
     @Mock
     private StrategyService strategyService;
+
+    @Mock
+    private SimulatorProgressCache simulatorProgressCache;
 
     @Before
     public void init() {
@@ -74,10 +80,10 @@ public class SimulatorServiceTest {
 
         SimulatorResponse response = simulatorService.simulate(request);
 
-        assertEquals(c1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(0));
-        assertEquals(c2, response.getGameRecords().get(0).getDealer().getHand().get(0));
-        assertEquals(c3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(1));
-        assertEquals(c4, response.getGameRecords().get(0).getDealer().getHand().get(1));
+        assertEquals(c1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(c2, response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(c3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(c4, response.getGameRecords().get(0).getDealer().getCard(1));
     }
 
     @Test
@@ -95,12 +101,12 @@ public class SimulatorServiceTest {
         SimulatorResponse response = simulatorService.simulate(request);
 
         // dealer hand
-        assertEquals(d1, response.getGameRecords().get(0).getDealer().getHand().get(0));
-        assertEquals(d2, response.getGameRecords().get(0).getDealer().getHand().get(1));
+        assertEquals(d1, response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(d2, response.getGameRecords().get(0).getDealer().getCard(1));
         // player split
-        assertEquals(p1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(0));
-        assertEquals(p2, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(1));
-        assertEquals(p3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(2));
+        assertEquals(p1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(p2, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(p3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(2));
     }
 
     @Test
@@ -119,13 +125,13 @@ public class SimulatorServiceTest {
         SimulatorResponse response = simulatorService.simulate(request);
 
         // dealer hand
-        assertEquals(d1, response.getGameRecords().get(0).getDealer().getHand().get(0));
-        assertEquals(d2, response.getGameRecords().get(0).getDealer().getHand().get(1));
+        assertEquals(d1, response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(d2, response.getGameRecords().get(0).getDealer().getCard(1));
         // player split
-        assertEquals(p1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(0));
-        assertEquals(p3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(1));
-        assertEquals(p2, response.getGameRecords().get(0).getPlayerAllHands().get(1).getHand().get(0));
-        assertEquals(p4, response.getGameRecords().get(0).getPlayerAllHands().get(1).getHand().get(1));
+        assertEquals(p1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(p3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(p2, response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(0));
+        assertEquals(p4, response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(1));
     }
 
     @Test
@@ -146,15 +152,15 @@ public class SimulatorServiceTest {
         SimulatorResponse response = simulatorService.simulate(request);
 
         // dealer hand
-        assertEquals(d1, response.getGameRecords().get(0).getDealer().getHand().get(0));
-        assertEquals(d2, response.getGameRecords().get(0).getDealer().getHand().get(1));
+        assertEquals(d1, response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(d2, response.getGameRecords().get(0).getDealer().getCard(1));
         // player split
-        assertEquals(p1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(0));
-        assertEquals(p3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(1));
-        assertEquals(p5, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(2));
-        assertEquals(p2, response.getGameRecords().get(0).getPlayerAllHands().get(1).getHand().get(0));
-        assertEquals(p4, response.getGameRecords().get(0).getPlayerAllHands().get(1).getHand().get(1));
-        assertEquals(p6, response.getGameRecords().get(0).getPlayerAllHands().get(1).getHand().get(2));
+        assertEquals(p1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(p3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(p5, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(2));
+        assertEquals(p2, response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(0));
+        assertEquals(p4, response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(1));
+        assertEquals(p6, response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(2));
     }
 
     @Test
@@ -174,18 +180,251 @@ public class SimulatorServiceTest {
 
         SimulatorResponse response = simulatorService.simulate(request);
 
-        System.out.println(response.getGameRecords());
+        // dealer hand
+        assertEquals(d1, response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(d2, response.getGameRecords().get(0).getDealer().getCard(1));
+        // player split
+        assertEquals(p1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(p5, response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(p2, response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(0));
+        assertEquals(p4, response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(1));
+        assertEquals(p3, response.getGameRecords().get(0).getPlayerAllHands().get(2).getCard(0));
+        assertEquals(p6, response.getGameRecords().get(0).getPlayerAllHands().get(2).getCard(1));
+    }
+
+    @Test
+    public void testPlayerBusted() {
+        mockDealCard("K", "2", "3", "2", "10", "10");
+        SimulatorRequest request = new SimulatorRequest(1);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.HIT, PlayerAction.HIT, PlayerAction.STAND);
+
+        SimulatorResponse response = simulatorService.simulate(request);
 
         // dealer hand
-        assertEquals(d1, response.getGameRecords().get(0).getDealer().getHand().get(0));
-        assertEquals(d2, response.getGameRecords().get(0).getDealer().getHand().get(1));
-        // player split
-        assertEquals(p1, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(0));
-        assertEquals(p5, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHand().get(1));
-        assertEquals(p2, response.getGameRecords().get(0).getPlayerAllHands().get(1).getHand().get(0));
-        assertEquals(p4, response.getGameRecords().get(0).getPlayerAllHands().get(1).getHand().get(1));
-        assertEquals(p3, response.getGameRecords().get(0).getPlayerAllHands().get(2).getHand().get(0));
-        assertEquals(p6, response.getGameRecords().get(0).getPlayerAllHands().get(2).getHand().get(1));
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("2"), response.getGameRecords().get(0).getDealer().getCard(1));
+        // player hand
+        assertEquals(card("3"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("2"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(2));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(2));
+        assertEquals(GameResult.DEALER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(-1, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testPlayerBustedWithoutStrategyService() {
+        mockDealCard("K", "2", "3", "2", "10", "10");
+        SimulatorRequest request = new SimulatorRequest(1);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.HIT); // strategy service always hit
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("2"), response.getGameRecords().get(0).getDealer().getCard(1));
+        // player hand
+        assertEquals(card("3"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("2"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(2));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(2));
+        assertEquals(GameResult.DEALER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(-1, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testDealerBusted() {
+        mockDealCard("K", "2", "10", "10", "K");
+        SimulatorRequest request = new SimulatorRequest(1);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.STAND); // strategy service always hit
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("2"), response.getGameRecords().get(0).getDealer().getCard(1));
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(2));
+        // player hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(GameResult.PLAYER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(1, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testPlayerGotBlackjack() {
+        mockDealCard("K", "2", "10", "A");
+        SimulatorRequest request = new SimulatorRequest(1);
+        // strategyService shouldn't get called
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("2"), response.getGameRecords().get(0).getDealer().getCard(1));
+        // player hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("A"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(GameResult.PLAYER_BLACKJACK, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(1.5, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testDealerGotBlackjack() {
+        mockDealCard("K", "A", "10", "10");
+        SimulatorRequest request = new SimulatorRequest(1);
+        // strategyService shouldn't get called
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("A"), response.getGameRecords().get(0).getDealer().getCard(1));
+        // player hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(GameResult.DEALER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(-1, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testBothGotBlackjack() {
+        mockDealCard("K", "A", "A", "10");
+        SimulatorRequest request = new SimulatorRequest(1);
+        // strategyService shouldn't get called
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("A"), response.getGameRecords().get(0).getDealer().getCard(1));
+        // player hand
+        assertEquals(card("A"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(GameResult.PUSH, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(0, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testSplitOneWinOneLost() {
+        mockDealCard("K", "K", "10", "10", "3", "A");
+        SimulatorRequest request = new SimulatorRequest(1);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.SPLIT, PlayerAction.STAND, PlayerAction.STAND); // strategy service always hit
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(1));
+        // player hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("3"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(0));
+        assertEquals(card("A"), response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(1));
+        assertEquals(GameResult.DEALER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(GameResult.PLAYER_WIN, response.getGameRecords().get(0).getResults().get(1));
+        assertEquals(0, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testSplitLostBoth() {
+        mockDealCard("K", "K", "10", "10", "3", "2");
+        SimulatorRequest request = new SimulatorRequest(1);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.SPLIT, PlayerAction.STAND, PlayerAction.STAND); // strategy service always hit
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(1));
+        // player hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("3"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(0));
+        assertEquals(card("2"), response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(1));
+        assertEquals(GameResult.DEALER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(GameResult.DEALER_WIN, response.getGameRecords().get(0).getResults().get(1));
+        assertEquals(-2, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testSplitWonBoth() {
+        mockDealCard("K", "5", "10", "10", "3", "2", "8");
+        SimulatorRequest request = new SimulatorRequest(1);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.SPLIT, PlayerAction.STAND, PlayerAction.STAND); // strategy service always hit
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("5"), response.getGameRecords().get(0).getDealer().getCard(1));
+        assertEquals(card("8"), response.getGameRecords().get(0).getDealer().getCard(2));
+        // player hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("3"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(0));
+        assertEquals(card("2"), response.getGameRecords().get(0).getPlayerAllHands().get(1).getCard(1));
+        assertEquals(GameResult.PLAYER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(GameResult.PLAYER_WIN, response.getGameRecords().get(0).getResults().get(1));
+        assertEquals(2, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testTwoGame() {
+        mockDealCard("K", "9", "10", "10", "3", "2", "8", "3", "9", "10");
+        SimulatorRequest request = new SimulatorRequest(2);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.STAND, PlayerAction.STAND); // strategy service always hit
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // first game
+        // dealer hand
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("9"), response.getGameRecords().get(0).getDealer().getCard(1));
+        // player hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(GameResult.PLAYER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(1, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+        // second game
+        // dealer hand
+        assertEquals(card("2"), response.getGameRecords().get(1).getDealer().getCard(0));
+        assertEquals(card("3"), response.getGameRecords().get(1).getDealer().getCard(1));
+        assertEquals(card("9"), response.getGameRecords().get(1).getDealer().getCard(2));
+        assertEquals(card("10"), response.getGameRecords().get(1).getDealer().getCard(3));
+        // player hand
+        assertEquals(card("3"), response.getGameRecords().get(1).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("8"), response.getGameRecords().get(1).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(GameResult.PLAYER_WIN, response.getGameRecords().get(1).getResults().get(0));
+        assertEquals(1, response.getGameRecords().get(1).getPlayerOriginalAsset());
+        assertEquals(2, response.getGameRecords().get(1).getPlayerAfterGameAsset());
+    }
+
+    private void mockDealCard(String dealer1, String dealer2, String... playerThenDealer) {
+        // Create an array of Card objects from the input String array
+        Card[] cardObjects = new Card[playerThenDealer.length + 2];
+        cardObjects[0] = new Card(playerThenDealer[0]);
+        cardObjects[1] = new Card(dealer1);
+        cardObjects[2] = new Card(playerThenDealer[1]);
+        cardObjects[3] = new Card(dealer2);
+
+        for (int i = 4; i < cardObjects.length; i++) {
+            cardObjects[i] = new Card(playerThenDealer[i - 2]);
+        }
+    
+        // Use Mockito to mock the next() method
+        Mockito.when(deck.next()).thenReturn(cardObjects[0], Arrays.copyOfRange(cardObjects, 1, cardObjects.length));
+    }
+
+    private Card card(String s) {
+        return new Card(s);
     }
 
 }
