@@ -28,7 +28,7 @@ public class SimulatorService {
     private SimulatorProgressCache simulatorProgressCache;
 
     private int NUM_OF_DECK = 2;
-    private double CUT_OFF = 0.5;
+    private double CUT_OFF = 0.7;
     private double BASE_BET = 1;
 
     public SimulatorResponse simulate(SimulatorRequest request) {
@@ -41,7 +41,16 @@ public class SimulatorService {
                 // RESHUFFLE
                 deck.shuffle();
             }
-            PlayerHand playerFirstHand = new PlayerHand(BASE_BET);
+
+            double gameBet = BASE_BET;
+            if (request.isUseRunningCount()) {
+                if (deck.getTrueRunningCount() > 1) {
+                    gameBet *= deck.getTrueRunningCount() - 1;
+                } else if (deck.getTrueRunningCount() < 0) {
+                    gameBet /= (deck.getTrueRunningCount() * -1);
+                }
+            }
+            PlayerHand playerFirstHand = new PlayerHand(gameBet);
             List<PlayerHand> playerHands = new ArrayList<>();
             playerHands.add(playerFirstHand);
             Hand dealer = new Hand();
@@ -73,38 +82,31 @@ public class SimulatorService {
                         if (playerCurrentHand.getHardSum() > 21) {
                             break;
                         }
-                        action = strategyService.getPlayerAction(playerCurrentHand, dealer);
-                        if (action == PlayerAction.STAND) {
-                            break;
-                        }
 
+                        action = strategyService.getPlayerAction(playerCurrentHand, dealer);
                         if (action == PlayerAction.DOUBLE && !firstAction) {
                             action = PlayerAction.HIT;
                         }
 
-                        switch (action) {
-                            case HIT:
-                                playerCurrentHand.add(deck.next());
-                                break;
-                            case DOUBLE:
-                                playerCurrentHand.doubleBet();
-                                break;
-                            case SPLIT:
-                                Card firstCard = playerCurrentHand.getCard(0);
-                                Card secondCard = playerCurrentHand.getCard(1);
+                        if (action == PlayerAction.STAND) {
+                            break;
+                        } else if (action == PlayerAction.DOUBLE) {
+                            playerCurrentHand.doubleBet();
+                            playerCurrentHand.add(deck.next());
+                            break;
+                        } else if (action == PlayerAction.HIT) {
+                            playerCurrentHand.add(deck.next());
+                        } else if (action == PlayerAction.SPLIT) {
+                            Card firstCard = playerCurrentHand.getCard(0);
+                            Card secondCard = playerCurrentHand.getCard(1);
 
-                                PlayerHand newHand = new PlayerHand(playerCurrentHand.getBet());
+                            PlayerHand newHand = new PlayerHand(playerCurrentHand.getBet());
 
-                                // split two hand, assign one new card to each
-                                playerCurrentHand.setHand(firstCard, deck.next());
-                                newHand.setHand(secondCard, deck.next());
+                            // split two hand, assign one new card to each
+                            playerCurrentHand.setHand(firstCard, deck.next());
+                            newHand.setHand(secondCard, deck.next());
 
-                                playerHands.add(newHand);
-                                break;
-                            default:
-                                System.err.printf("unexpected action: %s player: %s dealer: %s\n", action.toString(),
-                                        playerCurrentHand.toString(), dealer.toString());
-                                break;
+                            playerHands.add(newHand);
                         }
                         firstAction = false;
                     }
@@ -112,6 +114,7 @@ public class SimulatorService {
                         atLeastOneHandNoBust = true;
                     }
                 }
+
                 if (atLeastOneHandNoBust) {
                     // handle blackjack situation
                     dealDealersCard(dealer, deck);

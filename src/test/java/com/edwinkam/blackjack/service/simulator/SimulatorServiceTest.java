@@ -407,6 +407,52 @@ public class SimulatorServiceTest {
         assertEquals(2, response.getGameRecords().get(1).getPlayerAfterGameAsset());
     }
 
+    @Test
+    public void testDouble() {
+        mockDealCard("10", "5", "4", "5", "6", "K");
+        SimulatorRequest request = new SimulatorRequest(1);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.DOUBLE); // strategy service will double once
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // first game
+        // dealer hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("5"), response.getGameRecords().get(0).getDealer().getCard(1));
+        assertEquals(card("K"), response.getGameRecords().get(0).getDealer().getCard(2));
+        // player hand
+        assertEquals(card("4"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("5"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(card("6"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(2));
+        assertEquals(3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHandCount());
+        assertEquals(GameResult.PLAYER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(2, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
+    @Test
+    public void testDoubleBusted() {
+        mockDealCard("10", "5", "10", "5", "10", "K");
+        SimulatorRequest request = new SimulatorRequest(1);
+        Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
+                .thenReturn(PlayerAction.DOUBLE); // strategy service will double once
+
+        SimulatorResponse response = simulatorService.simulate(request);
+
+        // first game
+        // dealer hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getDealer().getCard(0));
+        assertEquals(card("5"), response.getGameRecords().get(0).getDealer().getCard(1));
+        assertEquals(2, response.getGameRecords().get(0).getDealer().getHandCount());
+        // player hand
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(0));
+        assertEquals(card("5"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(1));
+        assertEquals(card("10"), response.getGameRecords().get(0).getPlayerAllHands().get(0).getCard(2));
+        assertEquals(3, response.getGameRecords().get(0).getPlayerAllHands().get(0).getHandCount());
+        assertEquals(GameResult.DEALER_WIN, response.getGameRecords().get(0).getResults().get(0));
+        assertEquals(-2, response.getGameRecords().get(0).getPlayerAfterGameAsset());
+    }
+
     private void mockDealCard(String dealer1, String dealer2, String... playerThenDealer) {
         // Create an array of Card objects from the input String array
         Card[] cardObjects = new Card[playerThenDealer.length + 2];
