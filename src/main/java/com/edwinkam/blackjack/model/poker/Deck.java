@@ -6,10 +6,12 @@ public class Deck {
     private Card[] cards;
     private int currIndex;
     private int numOfDecks;
+    private int runningCount;
 
     public Deck(int numOfDecks) {
         this.cards = new Card[numOfDecks * 52];
         this.numOfDecks = numOfDecks;
+        this.runningCount = 0;
 
         init();
         shuffle();
@@ -25,6 +27,7 @@ public class Deck {
             }
         }
         this.currIndex = 0;
+        this.runningCount = 0;
     }
 
     public void shuffle() {
@@ -38,10 +41,25 @@ public class Deck {
             cards[j] = temp;
         }
         currIndex = 0;  // Reset current index after shuffling
+        this.runningCount = 0;
     }
 
     public Card next() {
-        return cards[currIndex++];
+        Card card = cards[currIndex++];
+        if (card.getValue() == 1 || card.getValue() == 10) {
+            runningCount--;
+        } else if (card.getValue() >= 2 && card.getValue() <= 6) {
+            runningCount++;
+        }
+        return card;
+    }
+
+    public int getTrueRunningCount() {
+        return this.runningCount / getDeckRemaining();
+    }
+
+    public int getDeckRemaining() {
+        return (cards.length - currIndex) / 52 + 1;
     }
 
     public double percentageUsed() {

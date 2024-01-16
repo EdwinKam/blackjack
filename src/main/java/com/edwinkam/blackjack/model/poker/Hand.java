@@ -74,6 +74,10 @@ public class Hand {
         return this.hand.get(index);
     }
 
+    public int getHandCount() {
+        return this.hand.size();
+    }
+
     public int getCardCount() {
         return hand.size();
     }
