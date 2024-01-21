@@ -70,7 +70,7 @@ public class HelloController {
 
     @CrossOrigin
     @PostMapping("/tests")
-    public String tests() throws InterruptedException {
+    public String tests() throws Exception {
         SimulatorRequest reqest = new SimulatorRequest(100);
         reqest.setTrackingUuid("test");
         return simulatorService.simulate(reqest).toString();

@@ -10,6 +10,7 @@ import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
 import com.edwinkam.blackjack.provider.DeckProvider;
 import com.edwinkam.blackjack.service.strategy.StrategyService;
+import lombok.SneakyThrows;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,6 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+
 import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -44,7 +46,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testSimulateNumOfGame() {
+    public void testSimulateNumOfGame() throws Exception {
         Mockito.when(strategyService.getPlayerAction(Mockito.any(), Mockito.any()))
                 .thenReturn(PlayerAction.STAND);
         Mockito.when(deck.next()).thenReturn(new Card("4"));
@@ -56,7 +58,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testSimulateLargeNumOfGame() {
+    public void testSimulateLargeNumOfGame() throws Exception {
         Mockito.when(strategyService.getPlayerAction(Mockito.any(), Mockito.any()))
                 .thenReturn(PlayerAction.STAND);
         Mockito.when(deck.next()).thenReturn(new Card("4"));
@@ -68,7 +70,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testMockDeck() {
+    public void testMockDeck() throws Exception {
         Card c1 = new Card("A");
         Card c2 = new Card("K");
         Card c3 = new Card("5");
@@ -87,7 +89,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testHit() {
+    public void testHit() throws Exception {
         Card p1 = new Card("A");
         Card d1 = new Card("K");
         Card p2 = new Card("2");
@@ -110,7 +112,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testSplit() {
+    public void testSplit() throws Exception {
         Card p1 = new Card("A");
         Card d1 = new Card("K");
         Card p2 = new Card("A");
@@ -135,7 +137,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testSplitHit() {
+    public void testSplitHit() throws Exception {
         Card p1 = new Card("A");
         Card d1 = new Card("K");
         Card p2 = new Card("A");
@@ -164,7 +166,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testSplitTwice() {
+    public void testSplitTwice() throws Exception {
         Card p1 = new Card("A");
         Card d1 = new Card("K");
         Card p2 = new Card("A");
@@ -193,7 +195,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testPlayerBusted() {
+    public void testPlayerBusted() throws Exception {
         mockDealCard("K", "2", "3", "2", "10", "10");
         SimulatorRequest request = new SimulatorRequest(1);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -214,7 +216,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testPlayerBustedWithoutStrategyService() {
+    public void testPlayerBustedWithoutStrategyService() throws Exception {
         mockDealCard("K", "2", "3", "2", "10", "10");
         SimulatorRequest request = new SimulatorRequest(1);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -235,7 +237,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testDealerBusted() {
+    public void testDealerBusted() throws Exception {
         mockDealCard("K", "2", "10", "10", "K");
         SimulatorRequest request = new SimulatorRequest(1);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -255,7 +257,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testPlayerGotBlackjack() {
+    public void testPlayerGotBlackjack() throws Exception {
         mockDealCard("K", "2", "10", "A");
         SimulatorRequest request = new SimulatorRequest(1);
         // strategyService shouldn't get called
@@ -273,7 +275,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testDealerGotBlackjack() {
+    public void testDealerGotBlackjack() throws Exception {
         mockDealCard("K", "A", "10", "10");
         SimulatorRequest request = new SimulatorRequest(1);
         // strategyService shouldn't get called
@@ -291,7 +293,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testBothGotBlackjack() {
+    public void testBothGotBlackjack() throws Exception {
         mockDealCard("K", "A", "A", "10");
         SimulatorRequest request = new SimulatorRequest(1);
         // strategyService shouldn't get called
@@ -309,7 +311,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testSplitOneWinOneLost() {
+    public void testSplitOneWinOneLost() throws Exception {
         mockDealCard("K", "K", "10", "10", "3", "A");
         SimulatorRequest request = new SimulatorRequest(1);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -331,7 +333,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testSplitLostBoth() {
+    public void testSplitLostBoth() throws Exception {
         mockDealCard("K", "K", "10", "10", "3", "2");
         SimulatorRequest request = new SimulatorRequest(1);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -353,7 +355,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testSplitWonBoth() {
+    public void testSplitWonBoth() throws Exception {
         mockDealCard("K", "5", "10", "10", "3", "2", "8");
         SimulatorRequest request = new SimulatorRequest(1);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -376,7 +378,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testTwoGame() {
+    public void testTwoGame() throws Exception {
         mockDealCard("K", "9", "10", "10", "3", "2", "8", "3", "9", "10");
         SimulatorRequest request = new SimulatorRequest(2);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -408,7 +410,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testDouble() {
+    public void testDouble() throws Exception {
         mockDealCard("10", "5", "4", "5", "6", "K");
         SimulatorRequest request = new SimulatorRequest(1);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -431,7 +433,7 @@ public class SimulatorServiceTest {
     }
 
     @Test
-    public void testDoubleBusted() {
+    public void testDoubleBusted() throws Exception {
         mockDealCard("10", "5", "10", "5", "10", "K");
         SimulatorRequest request = new SimulatorRequest(1);
         Mockito.when(strategyService.getPlayerAction(Mockito.any(Hand.class), Mockito.any(Hand.class)))
@@ -464,7 +466,7 @@ public class SimulatorServiceTest {
         for (int i = 4; i < cardObjects.length; i++) {
             cardObjects[i] = new Card(playerThenDealer[i - 2]);
         }
-    
+
         // Use Mockito to mock the next() method
         Mockito.when(deck.next()).thenReturn(cardObjects[0], Arrays.copyOfRange(cardObjects, 1, cardObjects.length));
     }
