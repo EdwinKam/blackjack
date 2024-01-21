@@ -52,7 +52,7 @@ public class SimulatorService {
             if (request.isUseRunningCount()) {
                 betRequest.setCurrentRunningCount(deck.getTrueRunningCount());
                 gameBet = strategyService.getPlayerBet(betRequest);
-                System.out.printf("count: %d, bet: %f\n", deck.getTrueRunningCount(), gameBet);
+//                System.out.printf("count: %d, bet: %f\n", deck.getTrueRunningCount(), gameBet);
             }
             PlayerHand playerFirstHand = new PlayerHand(gameBet);
             List<PlayerHand> playerHands = new ArrayList<>();
