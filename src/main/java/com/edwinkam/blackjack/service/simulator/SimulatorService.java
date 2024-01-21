@@ -10,6 +10,8 @@ import com.edwinkam.blackjack.model.poker.Deck;
 import com.edwinkam.blackjack.model.poker.Hand;
 import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
+import com.edwinkam.blackjack.model.strategy.CustomPlayerBetStrategy;
+import com.edwinkam.blackjack.model.strategy.GetPlayerBetRequest;
 import com.edwinkam.blackjack.provider.DeckProvider;
 import com.edwinkam.blackjack.service.strategy.StrategyService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +33,11 @@ public class SimulatorService {
     private double CUT_OFF = 0.7;
     private double BASE_BET = 1;
 
-    public SimulatorResponse simulate(SimulatorRequest request) {
+    public SimulatorResponse simulate(SimulatorRequest request) throws Exception {
+        GetPlayerBetRequest betRequest = new GetPlayerBetRequest();
+        betRequest.addStrategy(new CustomPlayerBetStrategy("runningCount", ">", "3", "3"));
+        betRequest.addStrategy(new CustomPlayerBetStrategy("runningCount", "<", "-3", "0.1"));
+
         Deck deck = deckProvider.newDeck(NUM_OF_DECK);
         double playerAsset = 0;
         List<GameRecord> gameRecords = new ArrayList<>();
@@ -44,11 +50,9 @@ public class SimulatorService {
 
             double gameBet = BASE_BET;
             if (request.isUseRunningCount()) {
-                if (deck.getTrueRunningCount() > 1) {
-                    gameBet *= deck.getTrueRunningCount() - 1;
-                } else if (deck.getTrueRunningCount() < 0) {
-                    gameBet /= (deck.getTrueRunningCount() * -1);
-                }
+                betRequest.setCurrentRunningCount(deck.getTrueRunningCount());
+                gameBet = strategyService.getPlayerBet(betRequest);
+                System.out.printf("count: %d, bet: %f\n", deck.getTrueRunningCount(), gameBet);
             }
             PlayerHand playerFirstHand = new PlayerHand(gameBet);
             List<PlayerHand> playerHands = new ArrayList<>();

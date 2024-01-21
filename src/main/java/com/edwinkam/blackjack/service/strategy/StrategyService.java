@@ -2,6 +2,8 @@ package com.edwinkam.blackjack.service.strategy;
 
 import com.edwinkam.blackjack.model.game.PlayerAction;
 import com.edwinkam.blackjack.model.poker.Hand;
+import com.edwinkam.blackjack.model.strategy.CustomPlayerBetStrategy;
+import com.edwinkam.blackjack.model.strategy.GetPlayerBetRequest;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +14,7 @@ public class StrategyService {
     private static final PlayerAction P = PlayerAction.SPLIT;
     private final PlayerAction[][] decisionTableHard = {
             // Dealer's card:
-        //   2  3  4  5  6  7  8  9  10 A
+            //   2  3  4  5  6  7  8  9  10 A
             {H, H, H, H, H, H, H, H, H, H}, // Player sum 5
             {H, H, H, H, H, H, H, H, H, H}, // Player sum 6
             {H, H, H, H, H, H, H, H, H, H}, // Player sum 7
@@ -34,7 +36,7 @@ public class StrategyService {
 
     private final PlayerAction[][] decisionTableSplit = {
             // Dealer's card:
-        //   2  3  4  5  6  7  8  9  10 A
+            //   2  3  4  5  6  7  8  9  10 A
             {P, P, P, P, P, P, P, P, P, P}, // Player's card A
             {P, P, P, P, P, H, H, H, H, H}, // Player's card 2
             {P, P, P, P, P, H, H, H, H, H}, // Player's card 3
@@ -49,7 +51,7 @@ public class StrategyService {
 
     private final PlayerAction[][] decisionTableAce = {
             // Dealer's card:
-        //   2  3  4  5  6  7  8  9  10 A
+            //   2  3  4  5  6  7  8  9  10 A
             {H, H, D, D, D, H, H, H, H, H}, // Player's card A2
             {H, H, D, D, D, H, H, H, H, H}, // Player's card A3
             {H, H, D, D, D, H, H, H, H, H}, // Player's card A4
@@ -84,6 +86,17 @@ public class StrategyService {
         } else {
             return PlayerAction.STAND;  // No choice but to stand when busted
         }
+    }
+
+    public double getPlayerBet(GetPlayerBetRequest request) throws Exception {
+        int currentRunningCount = request.getCurrentRunningCount();
+        for (CustomPlayerBetStrategy strategy : request.getStrategies()) {
+            if (strategy.conditionMet(request.getCurrentRunningCount())) {
+                return strategy.getBet(currentRunningCount);
+            }
+        }
+
+        return 1;
     }
 
 }

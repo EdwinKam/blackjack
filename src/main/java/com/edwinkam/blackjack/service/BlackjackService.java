@@ -47,7 +47,7 @@ public class BlackjackService {
                 System.out.printf("game %d took %fs\n", request.getNumOfGame(), (double) (System.currentTimeMillis() - startTime) / 1000);
                 simulatorResultCache.put(request.getTrackingUuid(), response.toString());
             } catch (Exception e) {
-                System.err.printf(Thread.currentThread().getName() + e);
+                System.err.printf(Thread.currentThread().getName() + e.getMessage());
             }
         }
     }
