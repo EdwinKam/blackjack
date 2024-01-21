@@ -7,6 +7,8 @@ import com.edwinkam.blackjack.queue.SimulatorRequestQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Service
@@ -40,6 +42,15 @@ public class BlackjackClient {
             }
             return (progress * 10) +"%";
         }
+    }
+
+    public Map<String, String> checkBatchSimulatorProgress(String[] trackingUuids) {
+        Map<String, String> progressMap = new HashMap<>();
+        for (String trackingUuid: trackingUuids) {
+            String progress = checkSimulatorProgress(trackingUuid);
+            progressMap.put(trackingUuid, progress);
+        }
+        return progressMap;
     }
 
     public String checkSimulatorResult(String trackingUuid) {
