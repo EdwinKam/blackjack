@@ -34,10 +34,7 @@ public class SimulatorService {
     private double BASE_BET = 1;
 
     public SimulatorResponse simulate(SimulatorRequest request) throws Exception {
-        GetPlayerBetRequest betRequest = new GetPlayerBetRequest();
-        betRequest.addStrategy(new CustomPlayerBetStrategy("runningCount", ">", "3", "3"));
-        betRequest.addStrategy(new CustomPlayerBetStrategy("runningCount", "<", "-3", "0.1"));
-
+        GetPlayerBetRequest betRequest = request.getGetPlayerBetRequest();
         Deck deck = deckProvider.newDeck(NUM_OF_DECK);
         double playerAsset = 0;
         List<GameRecord> gameRecords = new ArrayList<>();
