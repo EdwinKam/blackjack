@@ -1,6 +1,7 @@
 package com.edwinkam.blackjack.client;
 
 import com.edwinkam.blackjack.cache.SimulatorProgressCache;
+import com.edwinkam.blackjack.cache.SimulatorRequestCache;
 import com.edwinkam.blackjack.cache.SimulatorResultCache;
 import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
@@ -25,6 +26,9 @@ public class BlackjackClient {
     @Autowired
     SimulatorResultCache simulatorResultCache;
 
+    @Autowired
+    SimulatorRequestCache simulatorRequestCache;
+
     private List<String> trackingUuids = new ArrayList<>();
 
     public String submitSimulatorRequest(SimulatorRequest request) {
@@ -35,6 +39,7 @@ public class BlackjackClient {
         simulatorRequestQueue.add(request);
         trackingUuids.add(trackingUuid);
         simulatorProgressCache.put(trackingUuid, 0);
+        simulatorRequestCache.put(trackingUuid, request);
         return trackingUuid;
     }
 
@@ -63,7 +68,11 @@ public class BlackjackClient {
         return simulatorResultCache.get(trackingUuid);
     }
 
-    public String[] getAllTrackingUuid() {
-        return trackingUuids.toArray(new String[0]);
+    public Map<String, SimulatorRequest> getAllTrackingUuid() {
+        Map<String, SimulatorRequest> results = new HashMap<>();
+        for (String trackingUuid: trackingUuids) {
+            results.put(trackingUuid, simulatorRequestCache.get(trackingUuid));
+        }
+        return results;
     }
 }
