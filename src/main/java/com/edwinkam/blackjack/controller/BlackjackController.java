@@ -59,7 +59,7 @@ public class BlackjackController {
 
     @CrossOrigin
     @GetMapping("/getAllTrackingUuid")
-    public String[] getAllTrackingUuid() {
+    public Map<String, SimulatorRequest> getAllTrackingUuid() {
         return blackjackClient.getAllTrackingUuid();
     }
 }
