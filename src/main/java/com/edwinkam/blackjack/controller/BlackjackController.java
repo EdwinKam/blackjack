@@ -2,8 +2,12 @@ package com.edwinkam.blackjack.controller;
 
 import com.edwinkam.blackjack.client.BlackjackClient;
 import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
+import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
+import com.edwinkam.blackjack.model.strategy.CustomPlayerBetStrategy;
+import com.edwinkam.blackjack.model.strategy.GetPlayerBetRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,8 +24,18 @@ public class BlackjackController {
 
     @CrossOrigin
     @PostMapping("/simulateRequest")
-    public String simulate(@RequestParam Integer numOfGame) {
-        String trackingUuid = blackjackClient.submitSimulatorRequest(new SimulatorRequest(numOfGame));
+    public String simulate(@RequestParam Integer numOfGame, @RequestBody String[][] betStrategies) throws Exception {
+        SimulatorRequest request = new SimulatorRequest(numOfGame);
+        GetPlayerBetRequest betRequest = new GetPlayerBetRequest();
+        for (String[] betStrategy: betStrategies) {
+            if (betStrategy.length != 4) {
+                throw new Exception("expect each betStrategy to be size of 4");
+            }
+            betRequest.addStrategy(new CustomPlayerBetStrategy(betStrategy[0], betStrategy[1], betStrategy[2], betStrategy[3]));
+        }
+        request.setGetPlayerBetRequest(betRequest);
+        System.out.println(betRequest.getStrategies());
+        String trackingUuid = blackjackClient.submitSimulatorRequest(request);
         return trackingUuid;
     }
 
@@ -39,7 +53,13 @@ public class BlackjackController {
 
     @CrossOrigin
     @PostMapping("/checkResult")
-    public String checkResult(@RequestParam String trackingUuid) {
+    public SimulatorResponse checkResult(@RequestParam String trackingUuid) {
         return blackjackClient.checkSimulatorResult(trackingUuid);
+    }
+
+    @CrossOrigin
+    @GetMapping("/getAllTrackingUuid")
+    public Map<String, SimulatorRequest> getAllTrackingUuid() {
+        return blackjackClient.getAllTrackingUuid();
     }
 }

@@ -1,21 +1,22 @@
 package com.edwinkam.blackjack.cache;
 
+import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-public class SimulatorResultCache implements KVCache<String, String>{
-    private ConcurrentHashMap<String, String> concurrentHashMap;
+public class SimulatorResultCache implements KVCache<String, SimulatorResponse>{
+    private ConcurrentHashMap<String, SimulatorResponse> concurrentHashMap;
 
     public SimulatorResultCache() {
         this.concurrentHashMap = new ConcurrentHashMap<>();
     }
-    public void put(String key, String value) {
+    public void put(String key, SimulatorResponse value) {
         concurrentHashMap.put(key, value);
     }
 
-    public String get(String key) {
+    public SimulatorResponse get(String key) {
         return concurrentHashMap.get(key);
     }
 }

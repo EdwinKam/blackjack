@@ -45,7 +45,7 @@ public class BlackjackService {
                 System.out.printf("started %d\n", request.getNumOfGame());
                  SimulatorResponse response = simulatorService.simulate(request);
                 System.out.printf("game %d took %fs\n", request.getNumOfGame(), (double) (System.currentTimeMillis() - startTime) / 1000);
-                simulatorResultCache.put(request.getTrackingUuid(), response.toString());
+                simulatorResultCache.put(request.getTrackingUuid(), response);
             } catch (Exception e) {
                 System.err.printf(Thread.currentThread().getName() + e.getMessage());
             }

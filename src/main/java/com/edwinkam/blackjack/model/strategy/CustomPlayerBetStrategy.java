@@ -113,5 +113,15 @@ public class CustomPlayerBetStrategy {
     public String getComparisonOperator() {
         return comparisonOperator;
     }
+
+    @Override
+    public String toString() {
+        return "CustomPlayerBetStrategy {" +
+                "leftValue = '" + leftValue + '\'' +
+                ", comparisonOperator = '" + comparisonOperator + '\'' +
+                ", rightValue = '" + rightValue + '\'' +
+                ", bet = '" + bet + '\'' +
+                '}';
+    }
 }
 

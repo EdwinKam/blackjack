@@ -1,13 +1,17 @@
 package com.edwinkam.blackjack.client;
 
 import com.edwinkam.blackjack.cache.SimulatorProgressCache;
+import com.edwinkam.blackjack.cache.SimulatorRequestCache;
 import com.edwinkam.blackjack.cache.SimulatorResultCache;
 import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
+import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
 import com.edwinkam.blackjack.queue.SimulatorRequestQueue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,13 +26,20 @@ public class BlackjackClient {
     @Autowired
     SimulatorResultCache simulatorResultCache;
 
+    @Autowired
+    SimulatorRequestCache simulatorRequestCache;
+
+    private List<String> trackingUuids = new ArrayList<>();
+
     public String submitSimulatorRequest(SimulatorRequest request) {
         String trackingUuid = UUID.randomUUID().toString();
         request.setTrackingUuid(trackingUuid);
         request.setUseRunningCount(true);
         // blackjackService.java will pick up the request when available
         simulatorRequestQueue.add(request);
+        trackingUuids.add(trackingUuid);
         simulatorProgressCache.put(trackingUuid, 0);
+        simulatorRequestCache.put(trackingUuid, request);
         return trackingUuid;
     }
 
@@ -53,7 +64,15 @@ public class BlackjackClient {
         return progressMap;
     }
 
-    public String checkSimulatorResult(String trackingUuid) {
+    public SimulatorResponse checkSimulatorResult(String trackingUuid) {
         return simulatorResultCache.get(trackingUuid);
+    }
+
+    public Map<String, SimulatorRequest> getAllTrackingUuid() {
+        Map<String, SimulatorRequest> results = new HashMap<>();
+        for (String trackingUuid: trackingUuids) {
+            results.put(trackingUuid, simulatorRequestCache.get(trackingUuid));
+        }
+        return results;
     }
 }

@@ -82,6 +82,10 @@ public class Hand {
         return hand.size();
     }
 
+    public String getCards() {
+        return hand.toString();
+    }
+
     public String toString() {
         return hand.toString() + " Sum: " + this.getSum();
     }
