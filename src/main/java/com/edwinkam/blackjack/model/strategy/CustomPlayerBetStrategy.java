@@ -1,6 +1,7 @@
 package com.edwinkam.blackjack.model.strategy;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Stack;
@@ -8,6 +9,7 @@ import java.util.Stack;
 
 @AllArgsConstructor
 @Setter
+@Getter
 public class CustomPlayerBetStrategy {
     private String leftValue;
     private String comparisonOperator;
