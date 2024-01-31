@@ -36,10 +36,12 @@ public class BlackjackClient {
         request.setTrackingUuid(trackingUuid);
         request.setUseRunningCount(true);
         // blackjackService.java will pick up the request when available
-        simulatorRequestQueue.add(request);
         trackingUuids.add(trackingUuid);
-        simulatorProgressCache.put(trackingUuid, 0);
         simulatorRequestCache.put(trackingUuid, request);
+        simulatorRequestQueue.add(request);
+
+        simulatorProgressCache.put(trackingUuid, 0);
+
         return trackingUuid;
     }
 
@@ -49,7 +51,9 @@ public class BlackjackClient {
             return "Not found trackingUuid";
         } else {
             if (progress == 10) {
-                return "completed";
+                return StatusMessage.COMPLETED.name();
+            } else if (progress == -1) {
+                return StatusMessage.FAILURE.name();
             }
             return (progress * 10) +"%";
         }

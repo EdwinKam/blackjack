@@ -1,6 +1,8 @@
 package com.edwinkam.blackjack.service;
 
+import com.edwinkam.blackjack.cache.SimulatorProgressCache;
 import com.edwinkam.blackjack.cache.SimulatorResultCache;
+import com.edwinkam.blackjack.client.StatusMessage;
 import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
 import com.edwinkam.blackjack.queue.SimulatorRequestQueue;
@@ -26,6 +28,9 @@ public class BlackjackService {
     SimulatorResultCache simulatorResultCache;
 
     @Autowired
+    private SimulatorProgressCache simulatorProgressCache;
+
+    @Autowired
     @Qualifier("simulatorExecutor")
     private Executor taskExecutor;
 
@@ -41,13 +46,19 @@ public class BlackjackService {
             try {
                 // blackjackClient.java put in the request
                 SimulatorRequest request = simulatorRequestQueue.take();
-                long startTime = System.currentTimeMillis();
-                System.out.printf("started %d\n", request.getNumOfGame());
-                 SimulatorResponse response = simulatorService.simulate(request);
-                System.out.printf("game %d took %fs\n", request.getNumOfGame(), (double) (System.currentTimeMillis() - startTime) / 1000);
-                simulatorResultCache.put(request.getTrackingUuid(), response);
+                try {
+                    long startTime = System.currentTimeMillis();
+                    System.out.printf("started %d\n", request.getNumOfGame());
+                    SimulatorResponse response = simulatorService.simulate(request);
+                    System.out.printf("game %d took %fs\n", request.getNumOfGame(), (double) (System.currentTimeMillis() - startTime) / 1000);
+                    simulatorResultCache.put(request.getTrackingUuid(), response);
+                    simulatorProgressCache.put(request.getTrackingUuid(), 10);
+                } catch (Exception e) {
+                    simulatorProgressCache.put(request.getTrackingUuid(), -1);
+                    System.err.printf(Thread.currentThread().getName() + e.getMessage());
+                }
             } catch (Exception e) {
-                System.err.printf(Thread.currentThread().getName() + e.getMessage());
+                System.err.printf("Exception while polling request queue");
             }
         }
     }

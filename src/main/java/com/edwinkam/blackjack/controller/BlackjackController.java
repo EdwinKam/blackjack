@@ -31,9 +31,8 @@ public class BlackjackController {
             if (betStrategy.length != 4) {
                 throw new Exception("expect each betStrategy to be size of 4");
             }
-            betRequest.addStrategy(new CustomPlayerBetStrategy(betStrategy[0], betStrategy[1], betStrategy[2], betStrategy[3]));
+            request.addCustomerPlayerBetStrategy(new CustomPlayerBetStrategy(betStrategy[0], betStrategy[1], betStrategy[2], betStrategy[3]));
         }
-        request.setGetPlayerBetRequest(betRequest);
         System.out.println(betRequest.getStrategies());
         String trackingUuid = blackjackClient.submitSimulatorRequest(request);
         return trackingUuid;

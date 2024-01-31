@@ -34,7 +34,8 @@ public class SimulatorService {
     private double BASE_BET = 1;
 
     public SimulatorResponse simulate(SimulatorRequest request) throws Exception {
-        GetPlayerBetRequest betRequest = request.getGetPlayerBetRequest();
+        GetPlayerBetRequest betRequest = new GetPlayerBetRequest();
+        betRequest.setStrategies(request.getCustomPlayerBetStrategies());
         Deck deck = deckProvider.newDeck(NUM_OF_DECK);
         double playerAsset = 0;
         List<GameRecord> gameRecords = new ArrayList<>();
