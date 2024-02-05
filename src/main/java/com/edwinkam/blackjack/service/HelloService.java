@@ -1,7 +1,9 @@
 package com.edwinkam.blackjack.service;
 
 import com.edwinkam.blackjack.model.BlackjackTask;
+import com.edwinkam.blackjack.repository.BlackjackTaskRepository;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -12,6 +14,9 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 @Service
 public class HelloService {
+
+    @Autowired
+	private BlackjackTaskRepository repository;
 
     private BlockingQueue<BlackjackTask> requestQueue;
     private ConcurrentHashMap<String, String> concurrentHashMap;
