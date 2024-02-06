@@ -5,6 +5,7 @@ import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
 import com.edwinkam.blackjack.model.strategy.CustomPlayerBetStrategy;
 import com.edwinkam.blackjack.model.strategy.GetPlayerBetRequest;
+import com.edwinkam.blackjack.repository.SimulateRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -21,6 +23,9 @@ import java.util.Map;
 public class BlackjackController {
     @Autowired
     BlackjackClient blackjackClient;
+
+    @Autowired
+    SimulateRequestRepository simulateRequestRepository;
 
     @CrossOrigin
     @PostMapping("/simulateRequest")
@@ -57,8 +62,8 @@ public class BlackjackController {
     }
 
     @CrossOrigin
-    @GetMapping("/getAllTrackingUuid")
-    public Map<String, SimulatorRequest> getAllTrackingUuid() {
-        return blackjackClient.getAllTrackingUuid();
+    @GetMapping("/getAllSimulateRequest")
+    public List<SimulatorRequest> getAllTrackingUuid() {
+        return simulateRequestRepository.findAll();
     }
 }
