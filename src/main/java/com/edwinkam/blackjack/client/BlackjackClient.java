@@ -6,6 +6,7 @@ import com.edwinkam.blackjack.cache.SimulatorResultCache;
 import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
 import com.edwinkam.blackjack.queue.SimulatorRequestQueue;
+import com.edwinkam.blackjack.repository.SimulateRequestRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,9 @@ public class BlackjackClient {
     @Autowired
     SimulatorRequestCache simulatorRequestCache;
 
+    @Autowired
+    SimulateRequestRepository simulateRequestRepository;
+
     private List<String> trackingUuids = new ArrayList<>();
 
     public String submitSimulatorRequest(SimulatorRequest request) {
@@ -38,6 +42,7 @@ public class BlackjackClient {
         // blackjackService.java will pick up the request when available
         trackingUuids.add(trackingUuid);
         simulatorRequestCache.put(trackingUuid, request);
+        simulateRequestRepository.save(request);
         simulatorRequestQueue.add(request);
 
         simulatorProgressCache.put(trackingUuid, 0);
