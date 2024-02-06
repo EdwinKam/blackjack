@@ -7,6 +7,7 @@ import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
 import com.edwinkam.blackjack.queue.SimulatorRequestQueue;
 import com.edwinkam.blackjack.repository.SimulateRequestRepository;
+import com.edwinkam.blackjack.repository.SimulateResponseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,9 @@ public class BlackjackClient {
     @Autowired
     SimulateRequestRepository simulateRequestRepository;
 
+    @Autowired
+    SimulateResponseRepository simulateResponseRepository;
+
     private List<String> trackingUuids = new ArrayList<>();
 
     public String submitSimulatorRequest(SimulatorRequest request) {
@@ -53,15 +57,21 @@ public class BlackjackClient {
     public String checkSimulatorProgress(String trackingUuid) {
         Integer progress = simulatorProgressCache.get(trackingUuid);
         if (progress == null) {
-            return "Not found trackingUuid";
-        } else {
-            if (progress == 10) {
-                return StatusMessage.COMPLETED.name();
-            } else if (progress == -1) {
-                return StatusMessage.FAILURE.name();
-            }
-            return (progress * 10) +"%";
+            // if found in result db, this simulation was completed
+            progress = simulateResponseRepository.findByTrackingUuid(trackingUuid) == null ? null : 10;
         }
+
+        if (progress == null) {
+            // didn't find in both cache and db
+            return "Not found trackingUuid";
+        }
+
+        if (progress == 10) {
+            return StatusMessage.COMPLETED.name();
+        } else if (progress == -1) {
+            return StatusMessage.FAILURE.name();
+        }
+        return (progress * 10) +"%";
     }
 
     public Map<String, String> checkBatchSimulatorProgress(String[] trackingUuids) {
@@ -74,7 +84,7 @@ public class BlackjackClient {
     }
 
     public SimulatorResponse checkSimulatorResult(String trackingUuid) {
-        return simulatorResultCache.get(trackingUuid);
+        return simulateResponseRepository.findByTrackingUuid(trackingUuid);
     }
 
     public Map<String, SimulatorRequest> getAllTrackingUuid() {
