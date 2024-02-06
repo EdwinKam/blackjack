@@ -21,6 +21,8 @@ public class SimulatorRequest {
     private List<CustomPlayerBetStrategy> customPlayerBetStrategies = new ArrayList<>();
     private long creationTimeStamp = System.currentTimeMillis();
     private int requesterId;
+    private int numOfDecks;
+    private double cutOff ;
 
     public SimulatorRequest(int numOfGame) {
         this.numOfGame = numOfGame;
