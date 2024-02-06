@@ -29,19 +29,17 @@ public class SimulatorService {
     @Autowired
     private SimulatorProgressCache simulatorProgressCache;
 
-    private int NUM_OF_DECK = 2;
-    private double CUT_OFF = 0.7;
     private double BASE_BET = 1;
 
     public SimulatorResponse simulate(SimulatorRequest request) throws Exception {
         GetPlayerBetRequest betRequest = new GetPlayerBetRequest();
         betRequest.setStrategies(request.getCustomPlayerBetStrategies());
-        Deck deck = deckProvider.newDeck(NUM_OF_DECK);
+        Deck deck = deckProvider.newDeck(request.getNumOfDecks());
         double playerAsset = 0;
         List<GameRecord> gameRecords = new ArrayList<>();
         for (int currGame = 1; currGame <= request.getNumOfGame(); currGame++) {
             double playerOriginalAsset = playerAsset;
-            if (deck.percentageUsed() > CUT_OFF) {
+            if (deck.percentageUsed() > request.getCutOff()) {
                 // RESHUFFLE
                 deck.shuffle();
             }

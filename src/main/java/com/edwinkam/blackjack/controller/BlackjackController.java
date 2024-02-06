@@ -29,7 +29,7 @@ public class BlackjackController {
 
     @CrossOrigin
     @PostMapping("/simulateRequest")
-    public String simulate(@RequestParam Integer numOfGame, @RequestBody String[][] betStrategies) throws Exception {
+    public String simulate(@RequestParam Integer numOfGame, @RequestBody String[][] betStrategies, @RequestParam Integer numOfDecks, @RequestParam Double cutOff) throws Exception {
         SimulatorRequest request = new SimulatorRequest(numOfGame);
         GetPlayerBetRequest betRequest = new GetPlayerBetRequest();
         for (String[] betStrategy: betStrategies) {
@@ -38,7 +38,8 @@ public class BlackjackController {
             }
             request.addCustomerPlayerBetStrategy(new CustomPlayerBetStrategy(betStrategy[0], betStrategy[1], betStrategy[2], betStrategy[3]));
         }
-        System.out.println(betRequest.getStrategies());
+        request.setNumOfDecks(numOfDecks);
+        request.setCutOff(cutOff);
         String trackingUuid = blackjackClient.submitSimulatorRequest(request);
         return trackingUuid;
     }
