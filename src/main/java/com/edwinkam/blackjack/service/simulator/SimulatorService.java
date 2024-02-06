@@ -174,7 +174,7 @@ public class SimulatorService {
 
         }
 
-        SimulatorResponse response = new SimulatorResponse(gameRecords);
+        SimulatorResponse response = new SimulatorResponse(request.getTrackingUuid(), gameRecords);
         return response;
     }
 

@@ -6,6 +6,7 @@ import com.edwinkam.blackjack.client.StatusMessage;
 import com.edwinkam.blackjack.model.simulator.SimulatorRequest;
 import com.edwinkam.blackjack.model.simulator.SimulatorResponse;
 import com.edwinkam.blackjack.queue.SimulatorRequestQueue;
+import com.edwinkam.blackjack.repository.SimulateResponseRepository;
 import com.edwinkam.blackjack.service.simulator.SimulatorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -25,7 +26,7 @@ public class BlackjackService {
     SimulatorService simulatorService;
 
     @Autowired
-    SimulatorResultCache simulatorResultCache;
+    SimulateResponseRepository simulateResponseRepository;
 
     @Autowired
     private SimulatorProgressCache simulatorProgressCache;
@@ -51,7 +52,7 @@ public class BlackjackService {
                     System.out.printf("started %d\n", request.getNumOfGame());
                     SimulatorResponse response = simulatorService.simulate(request);
                     System.out.printf("game %d took %fs\n", request.getNumOfGame(), (double) (System.currentTimeMillis() - startTime) / 1000);
-                    simulatorResultCache.put(request.getTrackingUuid(), response);
+                    simulateResponseRepository.save(response);
                     simulatorProgressCache.put(request.getTrackingUuid(), 10);
                 } catch (Exception e) {
                     simulatorProgressCache.put(request.getTrackingUuid(), -1);
